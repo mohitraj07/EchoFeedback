@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feedback & Rating System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 550px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f4f6f8;
+    }
+    h1 { text-align: center; color: #2c3e50; }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    .stars { font-size: 28px; cursor: pointer; margin-top: 8px; }
+    .star { color: #ccc; }
+    .star.selected { color: #f1c40f; }
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #status { text-align: center; margin-top: 10px; color: #555; }
+    .feedback-item {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .feedback-item .meta { font-size: 12px; color: #888; }
+  </style>
+</head>
+<body>
+
+  <h1>Leave Feedback</h1>
+
+  <label>Name</label>
+  <input type="text" id="name" placeholder="Your name">
+
+  <label>Message</label>
+  <textarea id="message" rows="3" placeholder="Your feedback"></textarea>
+
+  <label>Rating</label>
+  <div class="stars" id="stars">
+    <span class="star" data-value="1">&#9733;</span>
+    <span class="star" data-value="2">&#9733;</span>
+    <span class="star" data-value="3">&#9733;</span>
+    <span class="star" data-value="4">&#9733;</span>
+    <span class="star" data-value="5">&#9733;</span>
+  </div>
+
+  <button onclick="submitFeedback()">Submit Feedback</button>
+  <p id="status"></p>
+
+  <h2>Recent Feedback</h2>
+  <div id="feedbackList"></div>
+
+  <script>
+    const API_URL = "https://1h6jsxboo7.execute-api.ap-south-1.amazonaws.com/prod/feedback";
+    let selectedRating = 0;
+
+    document.querySelectorAll('.star').forEach(star => {
+      star.addEventListener('click', () => {
+        selectedRating = parseInt(star.dataset.value);
+        document.querySelectorAll('.star').forEach(s => {
+          s.classList.toggle('selected', parseInt(s.dataset.value) <= selectedRating);
+        });
+      });
+    });
+
+    async function submitFeedback() {
+      const name = document.getElementById('name').value || 'Anonymous';
+      const message = document.getElementById('message').value;
+      const status = document.getElementById('status');
+
+      if (!message.trim()) {
+        status.textContent = "Please write a message.";
+        return;
+      }
+      if (selectedRating === 0) {
+        status.textContent = "Please select a rating.";
+        return;
+      }
+
+      status.textContent = "Submitting...";
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            operation: "submitFeedback",
+            name: name,
+            message: message,
+            rating: selectedRating
+          })
+        });
+        const data = await response.json();
+
+        if (data.message) {
+          status.textContent = "Thank you for your feedback!";
+          document.getElementById('name').value = '';
+          document.getElementById('message').value = '';
+          selectedRating = 0;
+          document.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+          loadFeedback();
+        } else {
+          status.textContent = "Error: " + (data.error || "Unknown error");
+        }
+      } catch (err) {
+        status.textContent = "Error: " + err.message;
+      }
+    }
+
+    async function loadFeedback() {
+      const list = document.getElementById('feedbackList');
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ operation: "getFeedback" })
+        });
+        const data = await response.json();
+
+        list.innerHTML = "";
+        data.feedback.forEach(item => {
+          const stars = "★".repeat(item.rating) + "☆".repeat(5 - item.rating);
+          list.innerHTML += `
+            <div class="feedback-item">
+              <strong>${item.name}</strong> — ${stars}
+              <p>${item.message}</p>
+              <div class="meta">${item.createdAt}</div>
+            </div>
+          `;
+        });
+      } catch (err) {
+        list.textContent = "Error loading feedback: " + err.message;
+      }
+    }
+
+    loadFeedback();
+  </script>
+
+</body>
+</html>
