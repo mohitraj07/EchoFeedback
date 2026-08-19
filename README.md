@@ -22,34 +22,34 @@ A web-based feedback and rating system with live results and instant email alert
 ## Screenshots
 
 ### DynamoDB table
-![DynamoDB table](Screenshots/01-DynamoDB-Table.png)
+![DynamoDB table](Screenshot/01-DynamoDB-Table.png)
 
 ### SNS topic with confirmed subscription
-![SNS subscription](Screenshots/02-SNS-Subscription.png)
+![SNS subscription](Screenshot/02-SNS-Subscription.png)
 
 ### Lambda code deployed
-![Lambda code deployed](Screenshots/03-LambdaCode-Deployed.png)
+![Lambda code deployed](Screenshot/03-LambdaCode-Deployed.png)
 
 ### Lambda test executed successfully
-![Lambda test successful](Screenshots/04-LambdaTest-Successfull.png)
+![Lambda test successful](Screenshot/04-LambdaTest-Successfull.png)
 
 ### Email alert received
-![Email alert](Screenshots/05-Email-Alert.png)
+![Email alert](Screenshot/05-Email-Alert.png)
 
 ### Scoped IAM policy
-![IAM policy](Screenshots/06-IAM-Policy.png)
+![IAM policy](Screenshot/06-IAM-Policy.png)
 
 ### REST API deployed (API Gateway)
-![API Gateway invoke URL](Screenshots/07-API-Gateway-Invoke-URL.png)
+![API Gateway invoke URL](Screenshot/07-API-Gateway-Invoke-URL.png)
 
 ### Frontend code
-![index.html in VS Code](Screenshots/08-Index-HTML-VScode.png)
+![index.html in VS Code](Screenshot/08-Index-HTML-VScode.png)
 
 ### AWS Amplify dashboard
-![Amplify dashboard](Screenshots/09-AWS-Amplify-Dashboard.png)
+![Amplify dashboard](Screenshot/09-AWS-Amplify-Dashboard.png)
 
 ### Live demo on Amplify
-![Live demo](Screenshots/10-AWS-Amplify-Live-Demo.png)
+![Live demo](Screenshot/10-AWS-Amplify-Live-Demo.png)
 
 ## Lambda function code
 
